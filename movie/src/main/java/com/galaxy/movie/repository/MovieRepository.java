@@ -5,6 +5,10 @@ import com.galaxy.movie.model.Movie;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ * @author Vamsi Krishna Myalapalli
+ * @since 12/27/2019
+ */
 @Repository
 public interface MovieRepository extends CrudRepository<Movie, String> {
 

@@ -10,6 +10,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+/**
+ * @author Vamsi Krishna Myalapalli
+ * @since 12/27/2019
+ */
 @Component
 public class SecurityFilter implements Filter {
 

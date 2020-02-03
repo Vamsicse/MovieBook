@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
+/**
+ * @author Vamsi Krishna Myalapalli
+ * @since 12/27/2019
+ */
 @RestController
 public class MovieController {
 

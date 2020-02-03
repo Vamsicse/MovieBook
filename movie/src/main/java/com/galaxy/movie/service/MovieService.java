@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Vamsi Krishna Myalapalli
+ * @since 12/27/2019
+ */
 @Service
 public class MovieService {
 

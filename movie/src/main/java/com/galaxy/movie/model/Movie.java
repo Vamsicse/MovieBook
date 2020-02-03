@@ -7,6 +7,10 @@ import javax.persistence.Id;
 import javax.persistence.Entity;
 import lombok.Data;
 
+/**
+ * @author Vamsi Krishna Myalapalli
+ * @since 12/27/2019
+ */
 @Data
 @JsonPropertyOrder
 @JsonInclude(Include.NON_NULL)
