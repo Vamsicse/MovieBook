@@ -7,11 +7,16 @@ import com.galaxy.movie.model.Movie;
 import com.galaxy.movie.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.swing.text.html.Option;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
-
 /**
  * @author Vamsi Krishna Myalapalli
  * @since 12/27/2019
@@ -27,14 +32,17 @@ public class MovieService {
         this.movieRepository = movieRepository;
     }
 
-    public Movie createMovie(Movie movie) {
+    public ResponseEntity createMovie(Movie movie) {
         System.out.println(MessageConstants.INFO + MessageInfo.flow + className + "." + new Throwable().getStackTrace()[0].getMethodName());
-        return movieRepository.save(new Movie(movie));
+        if(movieRepository.findById(movie.getId()).isPresent()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.TEXT_PLAIN).body("Movie with id " + movie.getId() + " is already present.");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(movieRepository.save(new Movie(movie)));
     }
 
-    public List<Movie> getAllMovies(){
+    public ResponseEntity getAllMovies(){
         System.out.println(MessageConstants.INFO + MessageInfo.flow + className + "." + new Throwable().getStackTrace()[0].getMethodName());
-        return (List<Movie>) movieRepository.findAll();
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(movieRepository.findAll());
     }
 
     public Movie getMovieByName(String name) {
@@ -43,39 +51,43 @@ public class MovieService {
     }
 
     @Cacheable("movie")
-    public Movie getMovieById(String id) {
+    public ResponseEntity getMovieById(String id) {
         System.out.println(MessageConstants.INFO + MessageInfo.flow + className + "." + new Throwable().getStackTrace()[0].getMethodName());
         System.out.println(MessageConstants.INFO + "Caching Data...");
-        return fetchMovie(id);
+        Optional<Movie> optionalMovie = movieRepository.findById(id);
+        if(optionalMovie.isPresent()){
+            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(optionalMovie.get());
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.TEXT_PLAIN).body("Could not find Movie with id " + id);
     }
 
-    public Movie updateMovie(String id, Movie updatedMovie) {
+    public ResponseEntity updateMovie(String id, Movie updatedMovie) {
         System.out.println(MessageConstants.INFO + MessageInfo.flow + className + "." + new Throwable().getStackTrace()[0].getMethodName());
-        Movie newMovie = fetchMovie(id);
-        newMovie.setName(updatedMovie.getName());
-        newMovie.setDescription(updatedMovie.getDescription());
-        newMovie.setReleaseYear(updatedMovie.getReleaseYear());
-        return movieRepository.save(newMovie);
+        Optional<Movie> optionalMovie = movieRepository.findById(id);
+        if(optionalMovie.isPresent()) {
+            Movie newMovie = optionalMovie.get();
+            newMovie.setName(updatedMovie.getName());
+            newMovie.setDescription(updatedMovie.getDescription());
+            newMovie.setReleaseYear(updatedMovie.getReleaseYear());
+            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(movieRepository.save(newMovie));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.TEXT_PLAIN).body("Could not find Movie with id " + id);
     }
 
-    public void deleteAllMovies() {
+    public ResponseEntity deleteAllMovies() {
         System.out.println(MessageConstants.WARNING + MessageInfo.flow + className + "." + new Throwable().getStackTrace()[0].getMethodName());
         movieRepository.deleteAll();
+        return ResponseEntity.noContent().build();
     }
 
-    public void deleteMovie(String id) {
+    public ResponseEntity deleteMovie(String id) {
         System.out.println(MessageConstants.INFO + MessageInfo.flow + className + "." + new Throwable().getStackTrace()[0].getMethodName());
-        Movie p = fetchMovie(id);
-        movieRepository.delete(p);
+        Optional<Movie> optionalMovie = movieRepository.findById(id);
+        if(optionalMovie.isPresent()){
+            movieRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.TEXT_PLAIN).body("Could not find Movie with id " + id);
     }
 
-    public Movie fetchMovie(String id){
-        Optional<Movie> movieOptional = movieRepository.findById(id);
-        if(movieOptional.isPresent()){
-            return movieOptional.get();
-        }
-        else{
-            throw new MovieException("Could not find movie with id: " + id);
-        }
-    }
 }
