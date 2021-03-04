@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Vamsi Krishna Myalapalli
  * @since 12/27/2019
  */
+@CrossOrigin(origins = "*")
 @RestController
 public class MovieController {
 
