@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 /**
  * @author Vamsi Krishna Myalapalli
  * @since 12/27/2019
  */
+@CrossOrigin(origins = "*")
 @RestController
 public class MovieController {
 
