@@ -12,7 +12,7 @@ public class IndexHandler {
 
     @GetMapping("/")
     public String indexPageMethod(){
-        return "   Hey What's Up!   ";
+        return "   Hey What's Up Folks!   ";
     }
 
 }
